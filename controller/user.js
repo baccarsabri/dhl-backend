@@ -73,4 +73,20 @@ exports.updateUser = async (req, res) => {
         return res.status(500).json({ message: err.message });
     }
 
-}
+};
+
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find(); // Assuming User is your Mongoose model
+
+        console.log("All users fetched successfully!", users);
+        return res.status(200).json(users);
+    } catch (err) {
+        console.log("Error while fetching all users: ", err);
+        return res.status(500).json({ message: err.message });
+    }
+};
+
+
+
+
