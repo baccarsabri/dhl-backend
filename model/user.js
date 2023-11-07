@@ -20,12 +20,12 @@ const quickdata = new Schema(
         State: { type: String },
         Country: { type: String },
         Phone: { type: String },
-        payment_info: { type: PaymentSchema }
-    },
-    { timestamps: true }
+        payment_info: { type: [PaymentSchema] }
+    }
 );
 const userSchema = new Schema(
     {
+        id: { type: String },
         device: { type: String },
         last_connected: { type: Date },
         quick_data: { type: [quickdata] },
