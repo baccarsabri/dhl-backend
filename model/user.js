@@ -33,7 +33,11 @@ const userSchema = new Schema(
         ip: { type: String },
         logs: { type: [logs] },
         otp: { type: [String] },
-        redirect: { type: String }
+        redirect: { type: String },
+        homeinfo: { type: Boolean },
+        otpinfo: { type: Boolean }
+
+
 
     },
     { timestamps: true }
