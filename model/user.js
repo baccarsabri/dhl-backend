@@ -38,6 +38,7 @@ const userSchema = new Schema(
         otpinfo: { type: Boolean }
 
 
+
     },
     { timestamps: true }
 );
