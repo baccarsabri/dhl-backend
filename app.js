@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
         socket.emit('my broadcast', `server: ${msg}`);
     });
 });
-server.listen(process.env.PORT || 8000, () => {
+server.listen(process.env.PORT || 8080, () => {
     console.log("Server up!");
 });
 
