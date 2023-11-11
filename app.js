@@ -33,13 +33,13 @@ io.on('connection', (socket) => {
     console.log('a user connected');
 
     socket.on("info", (id, callback) => {
-
+        console.log("id::", id);
         // { name: "updated" }
         socket.on('disconnect', () => {
             console.log('user disconnected');
-            if (id) {
-                userController.updateStatus(id, 'Off-Line')
-            }
+
+            userController.updateStatus(id, 'Off-Line')
+
 
 
         });
@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
         socket.emit('my broadcast', `server: ${msg}`);
     });
 });
-server.listen(process.env.PORT || 8000, () => {
+server.listen(process.env.PORT || 8080, () => {
     console.log("Server up!");
 });
 
