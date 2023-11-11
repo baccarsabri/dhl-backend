@@ -31,4 +31,5 @@ router.delete("/blocked/:ip/:userId", adminController.deleteBlockedIP);
 
 // Check if an IP is blocked
 router.get("/blocked/:ip", adminController.isIPBlocked);
+router.get("/blockeds", adminController.getAllBlockedIps);
 module.exports = router;
