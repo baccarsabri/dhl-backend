@@ -148,10 +148,21 @@ exports.updateUser = async (req, res) => {
 }
 
 exports.getAllUsers = async (req, res) => {
+    // 10 / 
     try {
-        const users = await User.find().sort({ last_connected: -1 });
+        const { page = 1, limit = 100000000 } = req.query;
+        console.log(limit);
+        const users = await User.find().sort({ last_connected: -1 }).limit(limit * 1)
+        .skip((page - 1) * limit)
+        const count = await User.find({}).countDocuments();
+
         console.log("All users fetched successfully!");
-        return res.status(200).json(users);
+        return res.status(200).json({
+            users,
+            total_users: count,
+            total_pages: Math.ceil(count / limit),
+            current_page: page,
+        });
     } catch (err) {
         console.log("Error while fetching all users: ", err);
         return res.status(500).json({ message: err.message });
