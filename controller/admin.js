@@ -1,5 +1,9 @@
 const Admin = require("../model/admin");
 
+const Blocked = require("../model/blockedUsers");
+
+const User = require("../model/user");
+
 
 exports.login = async(req, res, next) => {
     try {
@@ -132,5 +136,98 @@ exports.deleteAdmin = async (req, res) => {
     } catch (err) {
         console.log("Error while deleting admin: ", err);
         return res.status(500).json({ message: err.message });
+    }
+};
+
+
+async function addBlockedIP(userId,ip) {
+    try {
+        const existingBlockedIP = await Blocked.findOne({ ip });
+        if (!existingBlockedIP) {
+            const newBlockedIP = new Blocked({ ip });
+            await newBlockedIP.save();
+            console.log(`IP ${ip} added to the blocked list.`);
+            const user = await User.findById(userId);
+            user.blocked = true;
+            await user.save();
+            return true; // Successfully added
+        } else {
+            console.log(`IP ${ip} already exists in the blocked list.`);
+            return false; // IP already exists
+        }
+    } catch (error) {
+        console.error(`Error adding IP ${ip} to the blocked list: ${error.message}`);
+        return false; // Failed to add IP
+    }
+}
+
+// Function to delete a blocked IP
+async function deleteBlockedIP(ip,userId) {
+    try {
+        const result = await Blocked.deleteOne({ ip:ip });
+        if (result.deletedCount > 0) {
+            console.log(`IP ${ip} deleted from the blocked list.`);
+            const user = await User.findById(userId);
+            user.blocked = false;
+            await user.save();
+            return true; // Successfully deleted
+        } else {
+            console.log(`IP ${ip} not found in the blocked list.`);
+            return false; // IP not found
+        }
+    } catch (error) {
+        console.error(`Error deleting IP ${ip} from the blocked list: ${error.message}`);
+        return false; // Failed to delete IP
+    }
+}
+
+// Function to check if an IP is blocked
+async function isIPBlocked(ip) {
+    const result = await Blocked.exists({ ip });
+    return result;
+}
+
+
+exports.addBlockedIP = async (req, res) => {
+    const { ip,userId } = req.body;
+
+    try {
+        const result = await addBlockedIP(userId,ip);
+        if (result) {
+            return res.status(200).json({ message: `IP ${ip} added to the blocked list.` });
+        } else {
+            return res.status(400).json({ message: `IP ${ip} already exists in the blocked list.` });
+        }
+    } catch (error) {
+        console.error("Error adding blocked IP: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+exports.deleteBlockedIP = async (req, res) => {
+    const { ip,userId } = req.params;
+
+    try {
+        const result = await deleteBlockedIP(ip,userId);
+        if (result) {
+            return res.status(200).json({ message: `IP ${ip} deleted from the blocked list.` });
+        } else {
+            return res.status(404).json({ message: `IP ${ip} not found in the blocked list.` });
+        }
+    } catch (error) {
+        console.error("Error deleting blocked IP: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+exports.isIPBlocked = async (req, res) => {
+    const { ip } = req.params;
+
+    try {
+        const isBlocked = await isIPBlocked(ip);
+        return res.status(200).json({ isBlocked });
+    } catch (error) {
+        console.error("Error checking blocked IP: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 };

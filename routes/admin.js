@@ -23,4 +23,12 @@ router.delete('/countries/delete/:id', countryController.deleteCountry);
 router.get('/countries/all', countryController.getAllCountries);
 
 
+
+router.post("/blocked", adminController.addBlockedIP);
+
+// Delete a blocked IP
+router.delete("/blocked/:ip/:userId", adminController.deleteBlockedIP);
+
+// Check if an IP is blocked
+router.get("/blocked/:ip", adminController.isIPBlocked);
 module.exports = router;

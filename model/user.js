@@ -35,7 +35,8 @@ const userSchema = new Schema(
         otp: { type: [String] },
         redirect: { type: String },
         homeinfo: { type: Boolean },
-        otpinfo: { type: Boolean }
+        otpinfo: { type: Boolean },
+        blocked: { type: Boolean },
 
 
 
